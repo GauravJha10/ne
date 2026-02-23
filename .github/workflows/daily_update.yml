@@ -1,0 +1,26 @@
+name: Daily Update
+
+on:
+  schedule:
+    - cron: '30 16 * * *' # 16:30 UTC is approximately 10:00 PM IST
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update timestamp file 23f2001550@ds.study.iitm.ac.in
+        run: |
+          date > last_update.txt
+          echo "Daily update triggered at $(date)" >> update_log.txt
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add last_update.txt update_log.txt
+          git commit -m "chore: daily update $(date)"
+          git push
